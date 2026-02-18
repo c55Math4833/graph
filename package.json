@@ -86,7 +86,7 @@
   "quartz": {
     "name": "graph",
     "displayName": "Graph",
-    "category": "emitter",
+    "category": "component",
     "version": "1.0.0",
     "quartzVersion": ">=5.0.0",
     "dependencies": [],
