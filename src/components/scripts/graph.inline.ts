@@ -60,6 +60,20 @@ import {
       localStorage.setItem(localStorageKey, JSON.stringify(Array.from(visited)));
     }
 
+    // Resolves CSS color values containing calc()/var() that PixiJS cannot parse.
+    // Uses a temp DOM element so the browser's CSS engine evaluates the expression.
+    function resolveColor(value, fallback) {
+      if (!value) return fallback;
+      var el = document.createElement("div");
+      el.style.color = value;
+      el.style.position = "absolute";
+      el.style.visibility = "hidden";
+      document.body.appendChild(el);
+      var resolved = getComputedStyle(el).color;
+      el.remove();
+      return resolved || fallback;
+    }
+
     async function renderGraph(graph, fullSlug, renderGeneration) {
       var slug = simplifySlug(fullSlug);
       if (slug === "") slug = "index";
@@ -193,12 +207,12 @@ import {
       }
 
       var styles = getComputedStyle(document.documentElement);
-      var secondary = styles.getPropertyValue("--secondary").trim() || "#c792ea";
-      var tertiary = styles.getPropertyValue("--tertiary").trim() || "#82aaff";
-      var gray = styles.getPropertyValue("--gray").trim() || "#6c6c6c";
-      var lightgray = styles.getPropertyValue("--lightgray").trim() || "#d4d4d4";
-      var dark = styles.getPropertyValue("--dark").trim() || "#1a1a1a";
-      var light = styles.getPropertyValue("--light").trim() || "#f5f5f5";
+      var secondary = resolveColor(styles.getPropertyValue("--secondary").trim(), "#c792ea");
+      var tertiary = resolveColor(styles.getPropertyValue("--tertiary").trim(), "#82aaff");
+      var gray = resolveColor(styles.getPropertyValue("--gray").trim(), "#6c6c6c");
+      var lightgray = resolveColor(styles.getPropertyValue("--lightgray").trim(), "#d4d4d4");
+      var dark = resolveColor(styles.getPropertyValue("--dark").trim(), "#1a1a1a");
+      var light = resolveColor(styles.getPropertyValue("--light").trim(), "#f5f5f5");
       var bodyFont = styles.getPropertyValue("--bodyFont").trim() || "inherit";
 
       var app = new PIXI.Application();
